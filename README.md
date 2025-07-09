@@ -13,22 +13,14 @@ The browser-use MCP server provides browser automation capabilities to AI assist
 -   No visual interface
 -   Minimal resource usage
 -   Perfect for production deployments
--   Built with `docker build --target headless -t browser-use-mcp-server:latest .`
+-   Built with `docker build --target headless -t browser-use-mcp-server:latest-headless .`
 
 ### 2. VNC Mode (Debugging)
 
 -   Visual browser interface via VNC
 -   Great for debugging and development
 -   Watch the browser in real-time
--   Built with `docker build --target vnc -t browser-use-mcp-vnc:latest .`
-
-## Quick Build
-
-Use the provided build script to build both images:
-
-```bash
-./build.sh
-```
+-   Built with `docker build --target vnc -t browser-use-mcp-server:latest-vnc .`
 
 ## Environment Configuration
 
@@ -38,18 +30,22 @@ Create an MCP server configuration:
 
 ```json
 {
-	"browser-use": {
-		"command": "docker",
-		"args": [
-			"run",
-			"-i",
-			"--rm",
-			"-e",
-			"GOOGLE_API_KEY",
-			"browser-use-mcp-server:latest"
-		],
-		"env": {
-			"GOOGLE_API_KEY": "your_google_api_key_here"
+	"servers": {
+		"browser-use-mcp-server-vnc": {
+			"command": "docker",
+			"args": [
+				"run",
+				"-i",
+				"--rm",
+				"-p",
+				"5900:5900",
+				"-e",
+				"GOOGLE_API_KEY",
+				"browser-use-mcp-server:latest-vnc"
+			],
+			"env": {
+				"GOOGLE_API_KEY": "your_google_api_key_here"
+			}
 		}
 	}
 }
@@ -59,18 +55,16 @@ Cursor:
 
 ```json
 {
-	"mcpServers": {
-		"browser-use-debug2": {
+	"servers": {
+		"browser-use-mcp-server-headless": {
 			"command": "docker",
 			"args": [
 				"run",
 				"-i",
 				"--rm",
-				"-p",
-				"5900:5900",
 				"-e",
-				"GOOGLE_API_KEY=YOUR_API_KEY",
-				"browser-use-mcp-vnc:latest"
+				"GOOGLE_API_KEY",
+				"browser-use-mcp-server:latest-headless"
 			],
 			"env": {
 				"GOOGLE_API_KEY": "YOUR_API_KEY"
@@ -114,7 +108,7 @@ When using VNC mode:
 2. **Verify the container works**:
 
     ```bash
-    docker run --rm browser-use-mcp-server:latest python -c "from browser_use import BrowserSession; print('Browser-use working!')"
+    docker run --rm browser-use-mcp-server:latest-headless python -c "from browser_use import BrowserSession; print('Browser-use working!')"
     ```
 
 ### Browser Not Starting
@@ -123,8 +117,10 @@ When using VNC mode:
 # Check if the container is running
 docker ps
 # Check logs
-docker logs browser-use-mcp-vnc
+docker logs <container_id>
 ```
+
+Replace `<container_id>` with the actual container ID from `docker ps`.
 
 ### VNC Connection Issues
 
@@ -132,8 +128,10 @@ docker logs browser-use-mcp-vnc
 # Test VNC port
 nc -zv localhost 5900
 # Check if VNC server is running in container
-docker exec browser-use-mcp-vnc ps aux | grep vnc
+docker exec <container_id> ps aux | grep vnc
 ```
+
+Replace `<container_id>` with the actual container ID from `docker ps`.
 
 ## Architecture
 
