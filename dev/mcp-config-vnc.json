@@ -1,16 +1,20 @@
 {
-	"browser-use": {
-		"command": "docker",
-		"args": [
-			"run",
-			"-i",
-			"--rm",
-			"-e",
-			"GOOGLE_API_KEY",
-			"browser-use-mcp-server:latest"
-		],
-		"env": {
-			"GOOGLE_API_KEY": "your_google_api_key_here"
+	"servers": {
+		"browser-use-mcp-server-vnc": {
+			"command": "docker",
+			"args": [
+				"run",
+				"-i",
+				"--rm",
+				"-p",
+				"5900:5900",
+				"-e",
+				"GOOGLE_API_KEY",
+				"browser-use-mcp-server:latest-vnc"
+			],
+			"env": {
+				"GOOGLE_API_KEY": "your_google_api_key_here"
+			}
 		}
 	}
 }
