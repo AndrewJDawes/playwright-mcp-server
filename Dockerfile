@@ -15,13 +15,15 @@ WORKDIR /app
 # Install browser-use with CLI extras using pip instead of uv pip
 RUN pip install "browser-use[cli]"
 
-# Install Playwright browsers
-RUN playwright install chromium
+# Install Playwright system dependencies as root
 RUN playwright install-deps chromium
 
 # Create a non-root user for security
 RUN useradd -m -s /bin/bash browseruse
+
+# Switch to browseruse user and install Playwright browsers
 USER browseruse
+RUN playwright install chromium
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1

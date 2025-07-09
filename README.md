@@ -115,6 +115,26 @@ When using VNC mode:
 
 ## Troubleshooting
 
+### ✅ Fixed Issues
+
+The most common issue ("Chromium not found" error) has been **fixed** in the current Dockerfiles by ensuring proper installation order.
+
+**If you encounter issues:**
+
+1. **Rebuild the images** to get the latest fixes:
+
+    ```bash
+    ./setup-mcp.sh
+    ```
+
+2. **Verify the container works**:
+
+    ```bash
+    docker run --rm browser-use-mcp-server:latest python -c "from browser_use import BrowserSession; print('Browser-use working!')"
+    ```
+
+3. **Check the detailed troubleshooting guide**: See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) for comprehensive solutions.
+
 ### Browser Not Starting
 
 ```bash
@@ -131,13 +151,6 @@ docker logs browser-use-mcp-vnc
 nc -zv localhost 5900
 # Check if VNC server is running in container
 docker exec browser-use-mcp-vnc ps aux | grep vnc
-```
-
-### Permission Issues
-
-```bash
-# Run with proper permissions
-docker run -it --rm -u $(id -u):$(id -g) browser-use-mcp-vnc
 ```
 
 ## Architecture
