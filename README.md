@@ -1,6 +1,6 @@
 # Browser-Use MCP Server
 
-This repository contains Docker configurations for running the browser-use MCP server with different browser modes.
+This repository contains Docker configuration for running the browser-use MCP server with different browser modes.
 
 ## Overview
 
@@ -13,14 +13,22 @@ The browser-use MCP server provides browser automation capabilities to AI assist
 -   No visual interface
 -   Minimal resource usage
 -   Perfect for production deployments
--   Uses `Dockerfile.headless`
+-   Built with `docker build --target headless -t browser-use-mcp-server:latest .`
 
 ### 2. VNC Mode (Debugging)
 
 -   Visual browser interface via VNC
 -   Great for debugging and development
 -   Watch the browser in real-time
--   Uses `Dockerfile.vnc`
+-   Built with `docker build --target vnc -t browser-use-mcp-vnc:latest .`
+
+## Quick Build
+
+Use the provided build script to build both images:
+
+```bash
+./build.sh
+```
 
 ## Environment Configuration
 
