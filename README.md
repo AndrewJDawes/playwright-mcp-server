@@ -30,6 +30,8 @@ The browser-use MCP server provides browser automation capabilities to AI assist
 
 Create an MCP server configuration:
 
+VNC:
+
 ```json
 {
 	"servers": {
@@ -53,7 +55,7 @@ Create an MCP server configuration:
 }
 ```
 
-Cursor:
+Headless:
 
 ```json
 {
