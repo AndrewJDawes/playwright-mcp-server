@@ -13,7 +13,7 @@ The browser-use MCP server provides browser automation capabilities to AI assist
 -   No visual interface
 -   Minimal resource usage
 -   Perfect for production deployments
--   Uses `Dockerfile`
+-   Uses `Dockerfile.headless`
 
 ### 2. VNC Mode (Debugging)
 
@@ -21,45 +21,6 @@ The browser-use MCP server provides browser automation capabilities to AI assist
 -   Great for debugging and development
 -   Watch the browser in real-time
 -   Uses `Dockerfile.vnc`
-
-## Quick Start
-
-### Option 1: Using Docker Compose (Recommended)
-
-1. **Build the images:**
-
-    ```bash
-    chmod +x run-mcp.sh
-    ./run-mcp.sh build
-    ```
-
-2. **Run in headless mode:**
-
-    ```bash
-    ./run-mcp.sh headless
-    ```
-
-3. **Run with VNC (for debugging):**
-    ```bash
-    ./run-mcp.sh vnc
-    ```
-    Then connect to VNC at `localhost:5900` with password `browseruse`
-
-### Option 2: Manual Docker Commands
-
-**Headless mode:**
-
-```bash
-docker build -t browser-use-mcp-headless .
-docker run -it --rm browser-use-mcp-headless
-```
-
-**VNC mode:**
-
-```bash
-docker build -f Dockerfile.vnc -t browser-use-mcp-vnc .
-docker run -it --rm -p 5900:5900 browser-use-mcp-vnc
-```
 
 ## Environment Configuration
 
@@ -113,8 +74,6 @@ Cursor:
 
 ### Environment Variables
 
--   `GOOGLE_API_KEY`: For AI content extraction features
--   `BROWSER_USE_HEADLESS`: Set to `true` for headless, `false` for VNC mode
 -   `DISPLAY`: X11 display for VNC mode (automatically set)
 
 ## VNC Access
@@ -140,25 +99,15 @@ When using VNC mode:
 
 ## Troubleshooting
 
-### ✅ Fixed Issues
-
-The most common issue ("Chromium not found" error) has been **fixed** in the current Dockerfiles by ensuring proper installation order.
-
 **If you encounter issues:**
 
 1. **Rebuild the images** to get the latest fixes:
-
-    ```bash
-    ./setup-mcp.sh
-    ```
 
 2. **Verify the container works**:
 
     ```bash
     docker run --rm browser-use-mcp-server:latest python -c "from browser_use import BrowserSession; print('Browser-use working!')"
     ```
-
-3. **Check the detailed troubleshooting guide**: See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) for comprehensive solutions.
 
 ### Browser Not Starting
 
@@ -219,16 +168,3 @@ docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix browser
 xhost +localhost
 docker run -it --rm -e DISPLAY=host.docker.internal:0 browser-use-mcp-server:latest
 ```
-
-### Option 4: Remote Browser
-
-Use a separate browser instance (not covered in this setup).
-
-## Development
-
-To modify the setup:
-
-1. Edit `Dockerfile` or `Dockerfile.vnc`
-2. Rebuild with `./run-mcp.sh build`
-3. Test with your preferred mode
-4. Update MCP client configuration as needed
