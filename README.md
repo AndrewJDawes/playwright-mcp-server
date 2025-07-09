@@ -13,14 +13,16 @@ The browser-use MCP server provides browser automation capabilities to AI assist
 -   No visual interface
 -   Minimal resource usage
 -   Perfect for production deployments
--   Built with `docker build --target headless -t browser-use-mcp-server:latest-headless .`
+-   Postfix `-headless` to the image tag
+-   Example: `ghcr.io/andrewjedawes/browser-use-mcp-server:latest-headless`
 
 ### 2. VNC Mode (Debugging)
 
 -   Visual browser interface via VNC
 -   Great for debugging and development
 -   Watch the browser in real-time
--   Built with `docker build --target vnc -t browser-use-mcp-server:latest-vnc .`
+-   Postfix `-vnc` to the image tag
+-   Example: `ghcr.io/andrewjedawes/browser-use-mcp-server:latest-vnc`
 
 ## Environment Configuration
 
@@ -41,7 +43,7 @@ Create an MCP server configuration:
 				"5900:5900",
 				"-e",
 				"GOOGLE_API_KEY",
-				"browser-use-mcp-server:latest-vnc"
+				"ghcr.io/andrewjdawes/browser-use-mcp-server:latest-vnc"
 			],
 			"env": {
 				"GOOGLE_API_KEY": "your_google_api_key_here"
@@ -64,7 +66,7 @@ Cursor:
 				"--rm",
 				"-e",
 				"GOOGLE_API_KEY",
-				"browser-use-mcp-server:latest-headless"
+				"ghcr.io/andrewjdawes/browser-use-mcp-server:latest-headless"
 			],
 			"env": {
 				"GOOGLE_API_KEY": "YOUR_API_KEY"
@@ -108,7 +110,7 @@ When using VNC mode:
 2. **Verify the container works**:
 
     ```bash
-    docker run --rm browser-use-mcp-server:latest-headless python -c "from browser_use import BrowserSession; print('Browser-use working!')"
+    docker run --rm ghcr.io/andrewjdawes/browser-use-mcp-server:latest-headless python -c "from browser_use import BrowserSession; print('Browser-use working!')"
     ```
 
 ### Browser Not Starting
