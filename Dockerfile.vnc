@@ -7,7 +7,8 @@ RUN apt-get update && apt-get install -y \
     xvfb \
     x11vnc \
     fluxbox \
-    && rm -rf /var/lib/apt/lists/*
+    tigervnc-standalone-server \
+    && rm -rf /var/lib/apt/lists/
 
 # Install uv
 RUN pip install uv
@@ -15,7 +16,7 @@ RUN pip install uv
 # Set working directory
 WORKDIR /app
 
-# Install browser-use with CLI extras using pip instead of uv pip
+# Install browser-use with CLI extras
 RUN pip install "browser-use[cli]"
 
 # Install Playwright browsers
@@ -24,31 +25,31 @@ RUN playwright install-deps chromium
 
 # Create a non-root user for security
 RUN useradd -m -s /bin/bash browseruse
-USER browseruse
+
+# Set up VNC for root user (which will start the system services)
+RUN mkdir -p /root/.vnc && \
+    echo 'browseruse' | vncpasswd -f > /root/.vnc/passwd && \
+    chmod 600 /root/.vnc/passwd
 
 # Set environment variables
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONUNBUFFER=1
 ENV DISPLAY=:99
 ENV BROWSER_USE_HEADLESS=false
 
 # Create startup script
-USER root
 RUN echo '#!/bin/bash\n\
     # Start Xvfb\n\
     Xvfb :99 -screen 0 1024x768x24 &\n\
+    sleep 2\n\
     # Start window manager\n\
     fluxbox &\n\
     # Start VNC server\n\
-    x11vnc -display :99 -forever -usepw -create &\n\
+    x11vnc -display :99 -forever -passwd browseruse &\n\
+    # Give VNC time to start\n\
+    sleep 2\n\
     # Switch to browseruse user and start MCP server\n\
-    su browseruse -c "python -m browser_use.cli --mcp"\n\
+    su -c "cd /app && python -m browser_use.cli --mcp" browseruse\n\
     ' > /start.sh && chmod +x /start.sh
-
-# Set VNC password
-RUN mkdir -p /home/browseruse/.vnc && \
-    echo "browseruse" | vncpasswd -f > /home/browseruse/.vnc/passwd && \
-    chmod 600 /home/browseruse/.vnc/passwd && \
-    chown -R browseruse:browseruse /home/browseruse/.vnc
 
 # Expose VNC port
 EXPOSE 5900

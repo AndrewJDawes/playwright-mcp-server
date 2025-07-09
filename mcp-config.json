@@ -1,0 +1,16 @@
+{
+	"browser-use": {
+		"command": "docker",
+		"args": [
+			"run",
+			"-i",
+			"--rm",
+			"-e",
+			"GOOGLE_API_KEY",
+			"browser-use-mcp-server:latest"
+		],
+		"env": {
+			"GOOGLE_API_KEY": "your_google_api_key_here"
+		}
+	}
+}
