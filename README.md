@@ -86,6 +86,31 @@ Create an MCP server configuration:
 }
 ```
 
+Cursor:
+
+```json
+{
+	"mcpServers": {
+		"browser-use-debug2": {
+			"command": "docker",
+			"args": [
+				"run",
+				"-i",
+				"--rm",
+				"-p",
+				"5900:5900",
+				"-e",
+				"GOOGLE_API_KEY=YOUR_API_KEY",
+				"browser-use-mcp-vnc:latest"
+			],
+			"env": {
+				"GOOGLE_API_KEY": "YOUR_API_KEY"
+			}
+		}
+	}
+}
+```
+
 ### Environment Variables
 
 -   `GOOGLE_API_KEY`: For AI content extraction features
