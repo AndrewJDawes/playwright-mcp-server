@@ -1,4 +1,4 @@
-FROM python:3.11-slim AS base
+FROM node:20-bullseye AS base
 
 # Install common system dependencies
 RUN apt-get update && apt-get install -y \
@@ -6,23 +6,17 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     && rm -rf /var/lib/apt/lists/*
 
-# Install uv
-RUN pip install uv
-
 # Set working directory
 WORKDIR /app
-
-# Install browser-use with CLI extras
-RUN pip install "browser-use[cli]"
 
 # Install Playwright system dependencies as root
 RUN playwright install-deps chromium
 
 # Create a non-root user for security
-RUN useradd -m -s /bin/bash browseruse
+RUN useradd -m -s /bin/bash playwright
 
-# Switch to browseruse user and install Playwright browsers
-USER browseruse
+# Switch to playwright user and install Playwright browsers
+USER playwright
 RUN playwright install chromium
 
 # Switch back to root for configuration
@@ -37,11 +31,11 @@ FROM base AS headless
 ENV PYTHONUNBUFFERED=1
 ENV BROWSER_USE_HEADLESS=true
 
-# Switch to browseruse user for running the server
-USER browseruse
+# Switch to playwright user for running the server
+USER playwright
 
 # Run the browser-use MCP server in headless mode
-CMD ["python", "-m", "browser_use.cli", "--mcp"]
+CMD ["npx", "@playwright/mcp@latest", "--port", "8931", "--headless"]
 
 # =======================================================
 # VNC MODE
@@ -58,13 +52,11 @@ RUN apt-get update && apt-get install -y \
 
 # Set up VNC for root user
 RUN mkdir -p /root/.vnc && \
-    echo 'browseruse' | vncpasswd -f > /root/.vnc/passwd && \
+    echo 'playwright' | vncpasswd -f > /root/.vnc/passwd && \
     chmod 600 /root/.vnc/passwd
 
 # Set environment variables for VNC mode
-ENV PYTHONUNBUFFERED=1
 ENV DISPLAY=:99
-ENV BROWSER_USE_HEADLESS=false
 
 # Create startup script
 RUN echo '#!/bin/bash\n\
@@ -74,11 +66,11 @@ RUN echo '#!/bin/bash\n\
     # Start window manager\n\
     fluxbox &\n\
     # Start VNC server\n\
-    x11vnc -display :99 -forever -passwd browseruse &\n\
+    x11vnc -display :99 -forever -passwd playwright &\n\
     # Give VNC time to start\n\
     sleep 2\n\
-    # Switch to browseruse user and start MCP server\n\
-    su -c "cd /app && python -m browser_use.cli --mcp" browseruse\n\
+    # Switch to playwright user and start MCP server\n\
+    su -c "cd /app && npx @playwright/mcp@latest --port 8931" playwright\n\
     ' > /start.sh && chmod +x /start.sh
 
 # Expose VNC port
