@@ -223,3 +223,5 @@ docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix playwri
 xhost +localhost
 docker run -it --rm -e DISPLAY=host.docker.internal:0 playwright-mcp-server:latest
 ```
+
+## License
