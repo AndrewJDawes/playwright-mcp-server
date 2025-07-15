@@ -9,6 +9,9 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
+# Install Playwright globally so CLI is available
+RUN npm install -g playwright
+
 # Install Playwright system dependencies as root
 RUN playwright install-deps chromium
 
@@ -34,8 +37,9 @@ ENV BROWSER_USE_HEADLESS=true
 # Switch to playwright user for running the server
 USER playwright
 
-# Run the browser-use MCP server in headless mode
-CMD ["npx", "@playwright/mcp@latest", "--port", "8931", "--headless"]
+# Use ENTRYPOINT and CMD to allow argument overrides
+ENTRYPOINT ["npx", "@playwright/mcp@latest", "--browser", "chromium", "--port", "8931"]
+CMD ["--headless"]
 
 # =======================================================
 # VNC MODE
@@ -70,11 +74,12 @@ RUN echo '#!/bin/bash\n\
     # Give VNC time to start\n\
     sleep 2\n\
     # Switch to playwright user and start MCP server\n\
-    su -c "cd /app && npx @playwright/mcp@latest --port 8931" playwright\n\
+    su -c "cd /app && npx @playwright/mcp@latest --port 8931 --browser chromium $@" playwright\n\
     ' > /start.sh && chmod +x /start.sh
 
 # Expose VNC port
 EXPOSE 5900
 
 # Run the startup script
-CMD ["/start.sh"]
+ENTRYPOINT ["/start.sh"]
+CMD []
