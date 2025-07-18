@@ -38,7 +38,7 @@ ENV BROWSER_USE_HEADLESS=true
 USER playwright
 
 # Use ENTRYPOINT and CMD to allow argument overrides
-ENTRYPOINT ["npx", "-y", "@playwright/mcp@latest", "--browser", "chromium", "--port", "8931"]
+ENTRYPOINT ["npx", "-y", "@playwright/mcp@latest", "--browser", "chromium", "--port", "8931", "--isolated"]
 CMD ["--headless"]
 
 # =======================================================
@@ -74,7 +74,7 @@ RUN echo '#!/bin/bash\n\
     # Give VNC time to start\n\
     sleep 2\n\
     # Switch to playwright user and start MCP server\n\
-    su -c "cd /app && npx -y @playwright/mcp@latest --port 8931 --browser chromium $@" playwright\n\
+    su -c "cd /app && npx -y @playwright/mcp@latest --browser chromium --port 8931 --isolated $@" playwright\n\
     ' > /start.sh && chmod +x /start.sh
 
 # Expose VNC port
